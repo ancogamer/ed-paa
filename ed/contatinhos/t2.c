@@ -51,7 +51,7 @@ C* cF(C* c, char n){
     }
     for (;;){
         if (n == (c)->n){
-            return c;
+            return &c;
         }
         cF(c->dir,n);
         cf(c->esq,n);
@@ -62,9 +62,9 @@ C* cF(C* c, char n){
 
 void cD(struct C* c){
     if (c!=NULL){
-        ordem(c->dir);
+        cD(c->dir);
         printf("%d %n\n",c->n,c->nu);
-	    ordem(c->esq);
+	    cD(c->esq);
     }
 }
 
@@ -74,6 +74,9 @@ int main(){
         char co;
         int nu;
         char n;
+        C* cf=NULL;
+        C* dad=NULL;
+        C* son=NULL;
         scanf("%c %c %d",&co,&n,&nu);
         switch (co)
         {
@@ -81,14 +84,13 @@ int main(){
             iC(c,nu,n,NULL);
             break;
         case 'P':
-            C* cf;
+    
             cf=cF(c,n);
             if (cf==NULL){
                 printf("Contatinho nao encontrado\n");
             }
             printf("Contatinho encontrado: telefone %d\n",cf->nu);
         case 'R':
-            C* cf;
             cf=cF(c,n);
             if (cf==NULL){
                 printf("‘Operacao invalida:contatinho nao encontrado\n");
@@ -98,9 +100,7 @@ int main(){
                 continue;
             }
             if (cf->esq==NULL){
-                C* dad;
                 dad= cf->dad;
-                C* son;
                 if (dad->dir==cf){
                     son=cf->dir;
                     son->dad=dad;
@@ -115,9 +115,9 @@ int main(){
                 continue;
             }
             if (cf->dir==NULL){
-                C* dad;
+                C* dad=NULL;
                 dad= cf->dad;
-                C* son;
+                C* son=NULL;
                 if (dad->dir==cf){
                     son=cf->dir;
                     son->dad=dad;
@@ -133,7 +133,6 @@ int main(){
             }
             break;
         case 'A':
-            C* cf;
             cf=cF(c,n);
             if (cf==NULL){
                 printf("‘Operacao invalida:contatinho nao encontrado\n");
@@ -148,10 +147,7 @@ int main(){
              break;
             break;
         }
-
-
-       
-        
+        free(cf);
     }
    
 
