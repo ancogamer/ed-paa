@@ -2,18 +2,20 @@
 #include <stdlib.h>
 #include <time.h>
 #include <sys/time.h>
+#include <string.h> 
+
 
 typedef struct C {
-    char n;
+    char* n;
     int nu;  
-    struct c *dad;
-    struct c *dir;
-    struct c *esq;
+    struct C* dad;
+    struct C* dir;
+    struct C* esq;
       
 } C;
 
 
-void iC(C** t, int nu,char n,C* dad){
+void iC(C** t, int nu,char* n,C* dad){
     if(*t == NULL)
     {
         *t = (struct C *) malloc(sizeof(C));
@@ -24,19 +26,17 @@ void iC(C** t, int nu,char n,C* dad){
         (*t)->dad = dad; 
         return; 
     }
-    if( n< (*t)->n) /* Se o número for menor então vai pra esquerda */
-    {
-        /* Percorre pela subárvore à esquerda */  
-        iC(&(*t)->esq, nu,n,t);
+    
+    if(strcmp(n, (*t)->n) == -1){
+        iC(&(*t)->esq, nu,n,*t);
     }
-    if (n == (*t)->n){
-        printf("Contatinho ja inserido");
+    
+    if (strcmp(n, (*t)->n) == 0){
+        printf("Contatinho ja inserido\n");
         return;
     }
-    if(n > (*t)->n) /* Se o número for maior então vai pra direita */
-    {
-        /* Percorre pela subárvore à direita */
-        iC(&(*t)->dir, nu,n,t);
+    if(strcmp(n, (*t)->n) == 1){
+        iC(&(*t)->dir, nu,n,*t);
     }
     
 }
@@ -45,16 +45,17 @@ C* cB()
     return NULL;
 }
 
-C* cF(C* c, char n){
+C* cF(C* c, char* n){
     if (c ==NULL){
         return  NULL;
     }
     for (;;){
-        if (n == (c)->n){
-            return &c;
+            
+        if (strcmp(n, c->n) == 0){
+            return c;
         }
         cF(c->dir,n);
-        cf(c->esq,n);
+        cF(c->esq,n);
     }
 }
 
@@ -63,37 +64,42 @@ C* cF(C* c, char n){
 void cD(struct C* c){
     if (c!=NULL){
         cD(c->dir);
-        printf("%d %n\n",c->n,c->nu);
+        printf("%s %d\n",c->n,c->nu);
 	    cD(c->esq);
     }
 }
 
 int main(){
     C* c = cB();
+    char co;
+    int nu;
+    char na[10];
+    C* cf=NULL;
+    C* dad=NULL;
+    C* son=NULL;
     for (;;){
-        char co;
-        int nu;
-        char n;
-        C* cf=NULL;
-        C* dad=NULL;
-        C* son=NULL;
-        scanf("%c %c %d",&co,&n,&nu);
+        scanf("%c ",&co);
         switch (co)
         {
         case 'I':
-            iC(c,nu,n,NULL);
+            scanf("%s %d",na,&nu);
+            iC(&c,nu,na,NULL);
             break;
         case 'P':
-    
-            cf=cF(c,n);
+            scanf("%c ",na);
+            cf=cF(c,na);
             if (cf==NULL){
                 printf("Contatinho nao encontrado\n");
+                continue;
             }
             printf("Contatinho encontrado: telefone %d\n",cf->nu);
+
         case 'R':
-            cf=cF(c,n);
+            scanf("%c ",na);
+            cf=cF(c,na);
             if (cf==NULL){
-                printf("‘Operacao invalida:contatinho nao encontrado\n");
+                printf("Operacao invalida:contatinho nao encontrado\n");
+                continue;
             }
             if ((cf->esq==NULL)&&(cf->dir==NULL)){
                 free(cf);
@@ -133,9 +139,11 @@ int main(){
             }
             break;
         case 'A':
-            cf=cF(c,n);
+            scanf("%c ",na);
+            cf=cF(c,na);
             if (cf==NULL){
-                printf("‘Operacao invalida:contatinho nao encontrado\n");
+                printf("Operacao invalida:contatinho nao encontrado\n");
+                continue;
             }
             cf->nu=nu;
             break;
