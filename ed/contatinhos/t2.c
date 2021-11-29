@@ -6,7 +6,7 @@
 
 
 typedef struct C {
-    char* n;
+    char n[10];
     int nu;  
     struct C* dad;
     struct C* dir;
@@ -15,27 +15,29 @@ typedef struct C {
 } C;
 
 
-void iC(C** t, int nu,char* n,C* dad){
+void iC(C** t, int nu,char n[10],C* dad){
     if(*t == NULL)
     {
         *t = (struct C *) malloc(sizeof(C));
         (*t)->esq = NULL; 
         (*t)->dir = NULL; 
         (*t)-> nu= nu;
-        (*t)->n = n; 
+        strcpy((*t)->n,n); 
+        //printf("%s\n",(*t)->n);
         (*t)->dad = dad; 
         return; 
     }
     
-    if(strcmp(n, (*t)->n) == -1){
+    if(strcmp(n, (*t)->n) <0 ){
         iC(&(*t)->esq, nu,n,*t);
     }
-    
+
     if (strcmp(n, (*t)->n) == 0){
         printf("Contatinho ja inserido\n");
         return;
     }
-    if(strcmp(n, (*t)->n) == 1){
+
+    if(strcmp(n, (*t)->n) >0){
         iC(&(*t)->dir, nu,n,*t);
     }
     
@@ -45,16 +47,12 @@ C* cB()
     return NULL;
 }
 
-C* cF(C* c, char* n){
-    if (c ==NULL){
-        return  NULL;
-    }
-    for (;;){
-            
+C* cF(C* c, char n[10]){
+    if (c!=NULL){
         if (strcmp(n, c->n) == 0){
             return c;
         }
-        cF(c->dir,n);
+        cF(c->dir,n);           
         cF(c->esq,n);
     }
 }
@@ -72,13 +70,14 @@ void cD(struct C* c){
 int main(){
     C* c = cB();
     char co;
-    int nu;
-    char na[10];
+   
     C* cf=NULL;
     C* dad=NULL;
     C* son=NULL;
     for (;;){
-        scanf("%c ",&co);
+        int nu;
+        char na[10];
+        scanf("%c",&co);
         switch (co)
         {
         case 'I':
@@ -86,23 +85,22 @@ int main(){
             iC(&c,nu,na,NULL);
             break;
         case 'P':
-            scanf("%c ",na);
+            scanf("%s",na);
             cf=cF(c,na);
             if (cf==NULL){
                 printf("Contatinho nao encontrado\n");
                 continue;
             }
             printf("Contatinho encontrado: telefone %d\n",cf->nu);
-
+            break;
         case 'R':
-            scanf("%c ",na);
+            scanf("%s",na);
             cf=cF(c,na);
             if (cf==NULL){
                 printf("Operacao invalida:contatinho nao encontrado\n");
                 continue;
             }
             if ((cf->esq==NULL)&&(cf->dir==NULL)){
-                free(cf);
                 continue;
             }
             if (cf->esq==NULL){
@@ -139,7 +137,7 @@ int main(){
             }
             break;
         case 'A':
-            scanf("%c ",na);
+            scanf("%s",na);
             cf=cF(c,na);
             if (cf==NULL){
                 printf("Operacao invalida:contatinho nao encontrado\n");
@@ -150,12 +148,10 @@ int main(){
         case 'D':
             cD(c);
             break;
-        case '0':
-            free(c);
-             break;
-            break;
+        //case '0':
+            //free(c);
+            //return 0;
         }
-        free(cf);
     }
    
 
