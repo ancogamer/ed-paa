@@ -100,7 +100,9 @@ C* rC(struct C* c,char n[10]){
         else
         {
             C* aux = minValorNo(c->dir);
+            
             strcpy(c->n,aux->n);
+            c->nu = aux->nu;
             c->dir = rC(c->dir, aux->n);
         }
     }
